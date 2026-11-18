@@ -6,6 +6,8 @@
 	<string>com.leofalco.cafezinho</string>
 	<key>CFBundleName</key>
 	<string>Cafezinho</string>
+	<key>CFBundleIconFile</key>
+	<string>Cafezinho</string>
 	<key>CFBundleExecutable</key>
 	<string>Cafezinho</string>
 	<key>CFBundlePackageType</key>

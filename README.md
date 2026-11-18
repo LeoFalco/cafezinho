@@ -20,6 +20,10 @@ Precisa do Xcode ou das Command Line Tools (`xcode-select --install`) e do macOS
 
 Gera o `Cafezinho.app`, copia para `/Applications` e abre.
 
+## Ícone
+
+O `Cafezinho.icns` sai do `tools/gera-icone.swift` (xícara do SF Symbols sobre fundo café). Para gerar de novo, rode o script para um PNG de 1024 px e converta com `sips` e `iconutil`.
+
 ## Limite conhecido
 
 Com a tampa fechada e sem carregador, o macOS dorme de qualquer jeito: o `caffeinate` não segura esse caso.

@@ -6,9 +6,10 @@ cd "$(dirname "$0")"
 
 APP=build/Cafezinho.app
 rm -rf build
-mkdir -p "$APP/Contents/MacOS"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 swiftc -O -parse-as-library -swift-version 5 Sources/main.swift -o "$APP/Contents/MacOS/Cafezinho"
 cp Info.plist "$APP/Contents/"
+cp Cafezinho.icns "$APP/Contents/Resources/"
 codesign --force --sign - "$APP"
 echo "Gerado: $APP"
 
