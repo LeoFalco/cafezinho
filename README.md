@@ -26,4 +26,4 @@ O `Cafezinho.icns` sai do `tools/gera-icone.swift` (xícara do SF Symbols sobre 
 
 ## Limite conhecido
 
-Com a tampa fechada e sem carregador, o macOS dorme de qualquer jeito: o `caffeinate` não segura esse caso.
+Fechar a tampa põe o Mac para dormir mesmo no carregador, salvo com monitor externo ligado (modo clamshell): o `caffeinate` não impede isso.

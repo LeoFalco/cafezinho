@@ -15,6 +15,7 @@ echo "Gerado: $APP"
 
 if [ "$1" = "instalar" ]; then
   pkill -x Cafezinho || true
+  while pgrep -x Cafezinho >/dev/null; do sleep 0.1; done
   rm -rf /Applications/Cafezinho.app
   cp -R "$APP" /Applications/
   open /Applications/Cafezinho.app

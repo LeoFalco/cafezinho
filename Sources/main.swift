@@ -22,14 +22,14 @@ struct MenuCafe: View {
 
         Divider()
 
-        Button("Ligar sem limite") { cafe.ligar(segundos: nil) }
+        Button("Ligar sem limite") { cafe.ligar(segundos: nil) }.disabled(!cafe.temOpcao)
         Menu("Ligar por...") {
             ForEach([15, 30, 60, 120, 240, 480], id: \.self) { minutos in
                 Button(minutos < 60 ? "\(minutos) min" : "\(minutos / 60) h") {
                     cafe.ligar(segundos: minutos * 60)
                 }
             }
-        }
+        }.disabled(!cafe.temOpcao)
         Button("Desligar") { cafe.desligar() }.disabled(!cafe.ativo)
 
         Divider()
@@ -58,9 +58,16 @@ final class Cafe: ObservableObject {
     @Published private(set) var ativo = false
     @Published private(set) var fim: Date?
 
+    @Published private(set) var erro: String?
+
     private var processo: Process?
 
+    // Sem nenhuma flag o caffeinate assume -i, o que contradiria as opções marcadas.
+    var temOpcao: Bool { tela || inatividade || disco || carregador }
+
     var status: String {
+        if let erro { return erro }
+        guard temOpcao else { return "Marque ao menos uma opção para ligar" }
         guard ativo else { return "Desligado: o Mac dorme normalmente" }
         guard let fim else { return "Ligado sem limite" }
         return "Ligado até \(fim.formatted(date: .omitted, time: .shortened))"
@@ -68,6 +75,7 @@ final class Cafe: ObservableObject {
 
     func ligar(segundos: Int?) {
         desligar()
+        guard temOpcao else { return }
 
         var argumentos = [String]()
         if tela { argumentos.append("-d") }
@@ -93,9 +101,10 @@ final class Cafe: ObservableObject {
         do {
             try novo.run()
         } catch {
-            NSLog("Cafezinho: falha ao iniciar o caffeinate: \(error)")
+            erro = "Falha ao ligar: \(error.localizedDescription)"
             return
         }
+        erro = nil
         processo = novo
         ativo = true
         fim = segundos.map { Date().addingTimeInterval(Double($0)) }
@@ -114,6 +123,9 @@ final class Cafe: ObservableObject {
             if ligado { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
         } catch {
             NSLog("Cafezinho: falha ao alterar a abertura ao iniciar: \(error)")
+        }
+        if SMAppService.mainApp.status == .requiresApproval {
+            SMAppService.openSystemSettingsLoginItems()
         }
         objectWillChange.send()
     }
