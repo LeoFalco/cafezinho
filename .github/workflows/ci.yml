@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Test
+        run: ./test.sh
+
+      - name: Build universal app
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then export VERSION="${GITHUB_REF_NAME#v}"; fi
+          UNIVERSAL=1 ./build.sh zip
+          lipo -info build/Cafezinho.app/Contents/MacOS/Cafezinho
+          codesign --verify --verbose build/Cafezinho.app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Cafezinho
+          path: build/Cafezinho.zip
+
+      - name: Publish release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" build/Cafezinho.zip --title "$GITHUB_REF_NAME" --generate-notes

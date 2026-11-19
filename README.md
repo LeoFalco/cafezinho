@@ -1,5 +1,7 @@
 # Cafezinho
 
+[![CI](https://github.com/LeoFalco/cafezinho/actions/workflows/ci.yml/badge.svg)](https://github.com/LeoFalco/cafezinho/actions/workflows/ci.yml)
+
 App de barra de menus do macOS que liga e desliga o `caffeinate` com um clique.
 
 - Ligar sem limite ou por 15 min, 30 min, 1 h, 2 h, 4 h ou 8 h
@@ -12,17 +14,31 @@ Se o app fechar ou travar, o `caffeinate` morre junto (`-w`), então o Mac nunca
 
 ## Instalar
 
-Precisa do Xcode ou das Command Line Tools (`xcode-select --install`) e do macOS 13 ou mais novo.
+macOS 13 ou mais novo, Apple Silicon ou Intel:
 
 ```sh
-./build.sh instalar
+curl -fsSL https://raw.githubusercontent.com/LeoFalco/cafezinho/main/install.sh | sh
 ```
 
-Gera o `Cafezinho.app`, copia para `/Applications` e abre.
+Baixa a última versão publicada, coloca em `/Applications` e abre. Rodar de novo atualiza.
 
-## Ícone
+### A partir do código
 
-O `Cafezinho.icns` sai do `tools/gera-icone.swift` (xícara do SF Symbols sobre fundo café). Para gerar de novo, rode o script para um PNG de 1024 px e converta com `sips` e `iconutil`.
+Precisa do Xcode ou das Command Line Tools (`xcode-select --install`).
+
+```sh
+./build.sh install   # gera, copia para /Applications e abre
+./test.sh            # roda os testes
+```
+
+## Desenvolvimento
+
+- `Sources/CafezinhoCore`: a lógica (`Caffeinator`), que monta os argumentos e controla o processo do `caffeinate`
+- `Sources/Cafezinho`: o app SwiftUI da barra de menus
+- `Tests/CafezinhoCoreTests`: testes com Swift Testing, que sobem o `caffeinate` de verdade
+- `tools/make-icon.swift`: gera o PNG do ícone; converta para `.icns` com `sips` e `iconutil`
+
+O CI roda os testes e gera o app universal a cada push. Para publicar uma versão, crie uma tag `vX.Y.Z` e envie: o CI anexa o `Cafezinho.zip` à release, que é o que o `install.sh` baixa.
 
 ## Limite conhecido
 
