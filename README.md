@@ -4,6 +4,8 @@
 
 App de barra de menus do macOS que liga e desliga o `caffeinate` com um clique.
 
+<img src="docs/menu.png" alt="Menu do Cafezinho aberto na barra de menus" width="360">
+
 - Ligar sem limite ou por 15 min, 30 min, 1 h, 2 h, 4 h ou 8 h
 - Escolher as opções do `caffeinate`: tela acesa (`-d`), inatividade (`-i`), disco (`-m`) e carregador (`-s`)
 - Trocar uma opção com ele ligado religa na hora, mantendo o tempo que faltava
