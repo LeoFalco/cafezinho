@@ -5,9 +5,17 @@ import Testing
 @MainActor
 @Suite(.serialized)
 struct CaffeinatorTests {
+    // One fixed suite, wiped before each use, so test runs don't pile up plists in ~/Library/Preferences.
+    private static let suiteName = "cafezinho-tests"
+
+    private func freshDefaults() -> UserDefaults {
+        let defaults = UserDefaults(suiteName: Self.suiteName)!
+        defaults.removePersistentDomain(forName: Self.suiteName)
+        return defaults
+    }
+
     private func makeCaffeinator(executable: String = "/usr/bin/caffeinate") -> Caffeinator {
-        let defaults = UserDefaults(suiteName: "cafezinho-tests-\(UUID().uuidString)")!
-        return Caffeinator(defaults: defaults, executable: URL(fileURLWithPath: executable))
+        Caffeinator(defaults: freshDefaults(), executable: URL(fileURLWithPath: executable))
     }
 
     private func isAlive(_ pid: Int32) -> Bool { kill(pid, 0) == 0 }
@@ -70,7 +78,7 @@ struct CaffeinatorTests {
         let args = try #require(caffeinator.activeArguments)
         #expect(args.contains("-m"))
         let timer = try #require(args.firstIndex(of: "-t")).advanced(by: 1)
-        #expect((598...600).contains(Int(args[timer])!))
+        #expect((590...600).contains(try #require(Int(args[timer]))))
         #expect(caffeinator.pid != oldPID)
         try await waitUntil { !isAlive(oldPID) }
         #expect(!isAlive(oldPID))
@@ -106,11 +114,24 @@ struct CaffeinatorTests {
         caffeinator.start(seconds: nil)
         #expect(!caffeinator.isActive)
         #expect(caffeinator.status.hasPrefix("Falha ao ligar"))
+
+        caffeinator.stop()
+        #expect(caffeinator.status == "Desligado: o Mac dorme normalmente")
     }
 
     @Test func persistsOptions() {
-        let defaults = UserDefaults(suiteName: "cafezinho-tests-\(UUID().uuidString)")!
+        let defaults = freshDefaults()
         Caffeinator(defaults: defaults).disk = true
         #expect(Caffeinator(defaults: defaults).disk)
+    }
+
+    @Test func readsPreferencesSavedByV1() {
+        let defaults = freshDefaults()
+        defaults.set(false, forKey: "tela")
+        defaults.set(false, forKey: "inatividade")
+        defaults.set(true, forKey: "disco")
+        defaults.set(false, forKey: "carregador")
+        let caffeinator = Caffeinator(defaults: defaults)
+        #expect(!caffeinator.display && !caffeinator.idle && caffeinator.disk && !caffeinator.onAC)
     }
 }

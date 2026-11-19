@@ -22,6 +22,8 @@ curl -fsSL https://raw.githubusercontent.com/LeoFalco/cafezinho/main/install.sh 
 
 Baixa a última versão publicada, coloca em `/Applications` e abre. Rodar de novo atualiza.
 
+O app não é notarizado pela Apple. Se baixar o `Cafezinho.zip` da página de releases pelo navegador, o macOS vai bloquear a abertura: libere com `xattr -dr com.apple.quarantine /Applications/Cafezinho.app`.
+
 ### A partir do código
 
 Precisa do Xcode ou das Command Line Tools (`xcode-select --install`).

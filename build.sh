@@ -7,6 +7,11 @@
 set -e
 cd "$(dirname "$0")"
 
+case "$1" in
+  "" | install | zip) ;;
+  *) echo "unknown command: $1 (use install or zip)" >&2; exit 1 ;;
+esac
+
 ARCHS=""
 [ "$UNIVERSAL" = 1 ] && ARCHS="--arch arm64 --arch x86_64"
 
@@ -22,7 +27,8 @@ cp "$BIN" "$APP/Contents/MacOS/Cafezinho"
 cp Info.plist "$APP/Contents/"
 cp Cafezinho.icns "$APP/Contents/Resources/"
 if [ -n "$VERSION" ]; then
-  /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$APP/Contents/Info.plist"
+  /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" \
+    -c "Set :CFBundleVersion $VERSION" "$APP/Contents/Info.plist"
 fi
 codesign --force --sign - "$APP"
 echo "Built: $APP"

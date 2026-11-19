@@ -91,6 +91,7 @@ public final class Caffeinator: ObservableObject {
         let old = process
         process = nil
         old?.terminate()
+        error = nil
         isActive = false
         endsAt = nil
     }
