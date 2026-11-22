@@ -37,10 +37,10 @@ struct AppMenu: View {
 
         Divider()
 
-        Toggle("Manter a tela acesa (-d)", isOn: $caffeinator.display)
-        Toggle("Impedir sono por inatividade (-i)", isOn: $caffeinator.idle)
-        Toggle("Impedir sono do disco (-m)", isOn: $caffeinator.disk)
-        Toggle("Impedir sono no carregador (-s)", isOn: $caffeinator.onAC)
+        Toggle(isOn: $caffeinator.display) { Label("Manter a tela acesa", systemImage: "display") }
+        Toggle(isOn: $caffeinator.idle) { Label("Impedir sono por inatividade", systemImage: "moon.zzz") }
+        Toggle(isOn: $caffeinator.disk) { Label("Impedir sono do disco", systemImage: "internaldrive") }
+        Toggle(isOn: $caffeinator.onAC) { Label("Impedir sono no carregador", systemImage: "powerplug") }
 
         Divider()
 
